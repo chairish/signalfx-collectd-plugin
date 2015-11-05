@@ -485,19 +485,19 @@ def send_top():
     for p in psutil.process_iter():
         try:
             top[p.pid] = [
-                p.username(),  # user
+                p.username,  # user
                 get_priority(p.pid),  # priority
                 get_nice(p),  # nice value, numerical
-                p.memory_info_ex()[1],  # virtual memory size in kb int
-                p.memory_info_ex()[0],  # resident memory size in kd int
-                p.memory_info_ex()[2],  # shared memory size in kb int
-                status_map.get(p.status(), "D"),  # process status
-                p.cpu_percent(),  # % cpu, float
-                p.memory_percent(),  # % mem, float
-                to_time(p.cpu_times().system + p.cpu_times().user),  # cpu time
-                get_command(p)  # command
+                p.get_ext_memory_info()[1],  # virtual memory size in kb int
+                p.get_ext_memory_info()[0],  # resident memory size in kd int
+                p.get_ext_memory_info()[2],  # shared memory size in kb int
+                status_map.get(p.status, "D"),  # process status
+                p.get_cpu_percent(),  # % cpu, float
+                p.get_memory_percent(),  # % mem, float
+                to_time(p.get_cpu_times().system + p.get_cpu_times().user),  # cpu time
+                p.exe  # command
             ]
-        except Exception:
+        except Exception as e:
             t, e = sys.exc_info()[:2]
             sys.stdout.write(str(e))
             log("pid disappeared %d: %s" % (p.pid, str(e)))
